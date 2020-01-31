@@ -5,12 +5,15 @@ services:
       build:
         context: .
         dockerfile: Dockerfile
-      links: [db]
+      links: [db, testdb]
       volumes:
         - web_app:/var/www/html
       environment:
         - "DB_PORT=3306"
         - "DB_HOST=db"
+        - "DB_DATABASE=homestead"
+        - "DB_USERNAME=homestead"
+        - "DB_PASSWORD=secret"
   web:
       image: nginx:latest
       links: ["app:php"]
