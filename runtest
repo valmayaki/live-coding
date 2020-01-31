@@ -45,6 +45,6 @@ docker run -it  --rm \
     -e DB_PASSWORD=${M_PASSWORD} \
     -e DB_URL=${DB_TEST_URL} \
     -e APP_ENV=testing \
-    live-coding:latest sh -c " php artisan key:generate && php artisan migrate && ./vendor/bin/phpunit";
+    live-coding:latest sh -c " php artisan key:generate && php artisan migrate && ./vendor/bin/phpunit --testdox --coverage-html coverage ";
 
 docker stop ${NAMESPACE}db  && docker rm ${NAMESPACE}db;
