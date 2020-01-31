@@ -36,4 +36,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    /**
+     * Use to make Query for Tasks that belongs to a User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function tasks(){
+        return $this->hasMany(\App\Task::class, 'user_id');
+    }
 }

@@ -1,3 +1,50 @@
 #!/usr/bin/env bash
+#!/bin/bash
 
-./docapp-exec ./vendor/bin/phpunit "$@"
+set +e
+
+export M_USERNAME=homestead
+export M_PASSWORD=secret
+export M_DATABASE=homestead
+export M_PORT=3306
+export NAMESPACE=livecoding
+
+
+docker  run -it --name ${NAMESPACE}db  \
+    -e MYSQL_DATABASE=${M_DATABASE} \
+    -e MYSQL_USER=${M_USERNAME} \
+    -e MYSQL_PASSWORD=${M_PASSWORD} \
+    -e MYSQL_ROOT_PASSWORD=${M_PASSWORD} \
+    -d mysql:5.7;
+
+export DB_TEST_URL=mysql://${M_USERNAME}:${M_PASSWORD}@${NAMESPACE}db:${M_PORT}/${M_DATABASE}
+failcounter=0
+timeout_in_sec=30
+until docker exec ${NAMESPACE}db mysql -h 127.0.0.1 -u $M_USERNAME -p$M_PASSWORD -D $M_DATABASE --silent -e "show databases;" &> /dev/null; do
+    let "failcounter += 1"
+    echo "Waiting for database connection..."
+    if [[ $failcounter -gt timeout_in_sec ]]; then
+      echo "Timeout ($timeout_in_sec seconds) reached; failed to connect to database"
+      # add goto removeall of containers
+      exit 1
+    fi
+    sleep 2
+done
+echo "successfull connected to database"
+docker run -it  --rm \
+    --link ${NAMESPACE}db \
+     -v ${PWD}:/var/www/html \
+    --env-file ./.env.testing \
+    -e REDIS_HOST=${NAMESPACE}redis \
+    -e MAIL_HOST=${NAMESPACE}mail \
+    -e MAIL_PORT=1025 \
+    -e DB_HOST=${NAMESPACE}db \
+    -e DB_PORT=3306 \
+    -e DB_DATABASE=${M_DATABASE} \
+    -e DB_USERNAME=${M_USERNAME} \
+    -e DB_PASSWORD=${M_PASSWORD} \
+    -e DB_URL=${DB_TEST_URL} \
+    -e APP_ENV=testing \
+    live-coding:latest sh -c " php artisan key:generate && php artisan migrate && ./vendor/bin/phpunit";
+
+docker stop ${NAMESPACE}db  && docker rm ${NAMESPACE}db;
