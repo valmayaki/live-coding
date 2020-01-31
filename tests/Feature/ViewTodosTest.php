@@ -15,6 +15,7 @@ class ViewTodosTest extends TestCase
      */
     public function testUserCanSeeTheirTasksForTheDay()
     {
+        $this->withoutExceptionHandling();
         $response = $this->get('/api/todos');
 
         $response->assertStatus(200);
