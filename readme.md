@@ -7,4 +7,4 @@ You must have docker installed with docker-compose
 
 - Clone the project
 - Run `docker-compose up web`
-- vist 'http://localhost:8099' in your browser
+- Visit 'http://localhost:8099' in your browser
