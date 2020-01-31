@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+### Helper script to execute commands in the app container
+
+docker-compose exec app "$@"
