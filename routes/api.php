@@ -18,4 +18,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('auth:api')->get('/todos', 'TodosController@index');
+Route::middleware('auth:api')->get('/todos', 'TodosController@getTodos');
+Route::middleware('auth:api')->get('/tasks/', 'TaskController@getTasks');
+Route::middleware('auth:api')->post('/tasks/', 'TaskController@createTask');
+Route::middleware('auth:api')->put('/tasks/{task}', 'TaskController@updateTask');
+Route::middleware('auth:api')->patch('/tasks/{task}', 'TaskController@updateStatus');
+Route::middleware('auth:api')->delete('/tasks/{task}', 'TaskController@destroy');

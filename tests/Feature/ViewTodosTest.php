@@ -19,13 +19,15 @@ class ViewTodosTest extends TestCase
     {
         $this->withoutExceptionHandling();
         list($user, $token) = $this->setupApiUser();
-        $task = factory(\App\Task::class)->make();
-        $user->tasks()->save($task);
+        $task1 = factory(\App\Task::class)->make();
+        $task2 = factory(\App\Task::class)->make();
+        $user->tasks()->save($task1);
+        $user->tasks()->save($task2);
         $response = $this->actingAsViaApi($token)->json('GET', '/api/todos');
 
         $response->assertStatus(200);
         $content = json_decode($response->getContent(), true);
-        $this->assertCount(1, $content['data'], "It returns all todos that belong to a user");
+        $this->assertCount(2, $content['data'], "It returns all todos that belong to a user");
     }
     /**
      * A basic feature test example.
@@ -73,15 +75,5 @@ class ViewTodosTest extends TestCase
         $content = json_decode($response->getContent(), true);
         $this->assertCount(1, $content['data']);
     }
-    private function setupApiUser($data = []){
-        $token = Str::random(60);
-        if(!isset($data['token'])){
-            $data['api_token'] =  hash('sha256', $token);
-        }
-        $user = factory(\App\User::class)->create($data);
-        return [$user, $token];
-    }
-    private function getToken(){
-        return Str::random(60);
-    }
+
 }
