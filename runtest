@@ -30,7 +30,7 @@ until docker exec ${NAMESPACE}db mysql -h 127.0.0.1 -u $M_USERNAME -p$M_PASSWORD
     fi
     sleep 2
 done
-echo "successfull connected to database"
+echo "Successfully connected to database"
 docker run -it  --rm \
     --link ${NAMESPACE}db \
      -v ${PWD}:/var/www/html \
