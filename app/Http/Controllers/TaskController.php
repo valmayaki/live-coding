@@ -19,18 +19,28 @@ class TaskController extends Controller
     }
     public function updateStatus(\App\Task $task, Request $request)
     {
-        $updateTask = $this->taskService->updateStatus($task, $request['isDone']);
-        if (!is_null($updateTask)){
+        try{
+            $updateTask = $this->taskService->updateStatus($task, $request['isDone']);
             return response()->json(['data' => $updateTask]);
+        }catch(\InvalidArgumentException $ex){
+            return response()->json([
+                'message' => $ex->getMessage(),
+            ], 422);
         }
-        return response()->json(['message' => 'Unable to update Task'], 204);
     }
 
     public function createTask(Request $request)
     {
+        $this->validate($request, [
+            'title' => 'required|string',
+            'description' => 'string',
+            'due_at' => 'required|date'
+        ]);
         $data = $request->input();
         $task = $this->taskService->createTask($data);
-        return response()->json(['data' => $task], 201);
+        return response()->json([
+            'data' => $task
+        ], 201);
     }
     public function getTasks(Request $request)
     {

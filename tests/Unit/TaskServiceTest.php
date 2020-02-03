@@ -51,4 +51,12 @@ class TaskServiceTest extends TestCase
         $updatedTask = $taskService->updateStatus($task, false);
         $this->assertNotNull($updatedTask, "The Task done_at date should not be null");
     }
+
+    public function testItCanCreateNewTask()
+    {
+        $taskRepo = Mockery::mock(\App\Repositories\TaskRepository::class);
+        $taskService = new \App\Services\TaskService($taskRepo);
+        $data = ['title' => "Create a new Task For me", 'description' => "Task should be done today", "due_at"=> \Carbon\Carbon::now, 'user_id' => 1];
+        $taskService->createTask($data);
+    }
 }

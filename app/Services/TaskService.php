@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use BadMethodCallException;
+use Illuminate\Support\Facades\Validator;
 use InvalidArgumentException;
 
 class TaskService{
@@ -28,7 +29,8 @@ class TaskService{
 
     public function createTask($data)
     {
-        throw new BadMethodCallException('Not implemented');
+        $task = $this->taskRepo->save(new \App\Task($data));
+        return $task;
     }
 
     public function updateTask($task, $data)
